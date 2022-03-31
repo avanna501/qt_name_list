@@ -2,7 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <iostream>
-#include <QVector>
+#include <QList>
 using namespace std;
 
 void test()
@@ -51,12 +51,12 @@ bool writing_(QString l, QString file_name)
     return true;
 }
 
-QVector<QString> reading_(QString file_name)
+QList<QString> reading_(QString file_name)
 {
-    int i=0;
-
+    QString line;
     QFile file(file_name);
-    QVector<QString> list={};
+    QList<QString> list={};
+
     if (!file.exists())
     {
         cout<<"file not found"<<endl;
@@ -68,20 +68,19 @@ QVector<QString> reading_(QString file_name)
         return list;
     };
 
-    QTextStream in(&file);
-    QString line = in.readAll();
-    qInfo() << line;
+//    line = file.readLine();
+//    !line.isNull()
 
-    for(i=0;line.indexOf("\n")>=0;i++)
+    while(!file.atEnd())
     {
-        list.append(line.mid(0, line.toStdString().find("\n")));
-        line=line.mid(line.toStdString().find("\n")+1);
-        qInfo()<<list.last();
-    };
+        line = file.readLine();
+        list.append(line);
 
-    list.append(line);
-    qInfo()<<list.last();
+        qInfo()<<line<<list.last();
+    } ;
+
     return list;
+
 }
 
 int main(int argc, char *argv[])
@@ -93,8 +92,9 @@ int main(int argc, char *argv[])
 //    if (writing_("line 3", "C:/Users/inter/projects_a/qt_name_list/namelist/test.txt")==true)
 //        if (writing_("line 4", "C:/Users/inter/projects_a/qt_name_list/namelist/test.txt")==true)
 //            cout<<"done"<<endl;
-    QVector<QString> list=reading_("C:/Users/inter/projects_a/qt_name_list/namelist/test.txt");
-   if (list.size()>0)
-               cout<<"reading compelete";
+    QList<QString> list;
+    list=reading_("C:/Users/inter/projects_a/qt_name_list/namelist/test.txt");
+    qInfo()<<list.size();
+
     return a.exec();
 }
