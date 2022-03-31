@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <iostream>
+#include <QVector>
 using namespace std;
 
 void test()
@@ -50,51 +51,37 @@ bool writing_(QString l, QString file_name)
     return true;
 }
 
-int reading_(QString file_name)
+QVector<QString> reading_(QString file_name)
 {
     int i=0;
-//    QString * list = (QString *)calloc(i+1,sizeof(QString));
-//    QString * list = new QString[i+1];
 
     QFile file(file_name);
-
+    QVector<QString> list={};
     if (!file.exists())
     {
         cout<<"file not found"<<endl;
-        return 0;
+        return list;
     }
     if (!file.open(QIODevice::OpenModeFlag::ReadOnly))
     {
         cout<<"couldn't open the file"<<endl;
-        return 0;
+        return list;
     };
 
     QTextStream in(&file);
     QString line = in.readAll();
     qInfo() << line;
 
-    QString * list=new QString [line.count("\n")+1];
-//QString
-    for(i=0;line.indexOf("\n")>=0 && i<15;i++)
+    for(i=0;line.indexOf("\n")>=0;i++)
     {
-        list[i]=line.mid(0, line.toStdString().find("\n"));
-
-//        qInfo()<<i<<line.mid(0, line.toStdString().find("\n"))<<"and"<<list[i];
-
-
-//        if(  (list=(QString *)realloc(list,(i+1)*(sizeof(QString))))==NULL )
-//            cout<<"realloc unsuccessful";
-
+        list.append(line.mid(0, line.toStdString().find("\n")));
         line=line.mid(line.toStdString().find("\n")+1);
-
-//        qInfo()<<line<<"\n";
-        qInfo()<<list[i];
-//        <<"and"<<line;
+        qInfo()<<list.last();
     };
 
-    list[i]=(QString)line;
-        qInfo()<<list[i];
-    return i;
+    list.append(line);
+    qInfo()<<list.last();
+    return list;
 }
 
 int main(int argc, char *argv[])
@@ -106,9 +93,8 @@ int main(int argc, char *argv[])
 //    if (writing_("line 3", "C:/Users/inter/projects_a/qt_name_list/namelist/test.txt")==true)
 //        if (writing_("line 4", "C:/Users/inter/projects_a/qt_name_list/namelist/test.txt")==true)
 //            cout<<"done"<<endl;
-       if(reading_("C:/Users/inter/projects_a/qt_name_list/namelist/test.txt")>0) cout<<"reading compelete";
-
-
-
+    QVector<QString> list=reading_("C:/Users/inter/projects_a/qt_name_list/namelist/test.txt");
+   if (list.size()>0)
+               cout<<"reading compelete";
     return a.exec();
 }
